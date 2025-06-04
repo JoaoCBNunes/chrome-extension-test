@@ -1,0 +1,14 @@
+{
+  "name": "Image Size Checker",
+  "version": "1.0",
+  "description": "Detect large images (>=1080x1080) and list them in an on-page panel.",
+  "manifest_version": 3,
+  "permissions": [],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-script.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
