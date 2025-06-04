@@ -1,25 +1,31 @@
 (() => {
-  // 1. Create the info panel
-  const panel = document.createElement('div');
-  panel.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: #ffb3d9;
-    color: #000;
-    z-index: 2147483647;
-    font-family: monospace;
-    font-size: 12px;
-    padding: 4px;
-    max-height: 480px;
-    overflow: auto;
-    box-shadow: 0 2px 4px rgba(0,0,0,.2);
-  `;
-  panel.textContent = 'Imagens “grandonas” (área \u2265 1080×1080) detectadas:';
-  document.body.appendChild(panel);
+  let panel;
+  let mo;
 
-  // 2. Report function for console and panel
+  const createPanel = () => {
+    if (panel) return;
+    panel = document.createElement('div');
+    panel.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #ffb3d9;
+      color: #000;
+      z-index: 2147483647;
+      font-family: monospace;
+      font-size: 12px;
+      padding: 4px;
+      max-height: 480px;
+      overflow: auto;
+      box-shadow: 0 2px 4px rgba(0,0,0,.2);
+    `;
+    panel.textContent =
+      'Imagens “grandonas” (área \u2265 1080×1080) detectadas:';
+    document.body.appendChild(panel);
+  };
+
+  // Report function for console and panel
   const report = (img) => {
     const { naturalWidth: w, naturalHeight: h, src: url } = img;
     const line = document.createElement('div');
@@ -34,7 +40,6 @@
     console.log('[IMAGEM GRANDE]', w, '×', h, url);
   };
 
-  // 3. Check image area
   const watchImg = (img) => {
     const checkArea = () => {
       const area = img.naturalWidth * img.naturalHeight;
@@ -47,20 +52,48 @@
       : img.addEventListener('load', checkArea, { once: true });
   };
 
-  // 4. Initial scan
-  document.querySelectorAll('img').forEach(watchImg);
+  const start = () => {
+    createPanel();
+    document.querySelectorAll('img').forEach(watchImg);
+    mo = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        m.addedNodes.forEach((node) => {
+          if (node.tagName === 'IMG') {
+            watchImg(node);
+          } else if (node.querySelectorAll) {
+            node.querySelectorAll('img').forEach(watchImg);
+          }
+        });
+      }
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+  };
 
-  // 5. Observe future images
-  const mo = new MutationObserver((mutations) => {
-    for (const m of mutations) {
-      m.addedNodes.forEach((node) => {
-        if (node.tagName === 'IMG') {
-          watchImg(node);
-        } else if (node.querySelectorAll) {
-          node.querySelectorAll('img').forEach(watchImg);
-        }
-      });
+  const stop = () => {
+    if (mo) {
+      mo.disconnect();
+      mo = null;
+    }
+    if (panel) {
+      panel.remove();
+      panel = null;
+    }
+  };
+
+  let enabled = true;
+  chrome.storage.local.get({ enabled: true }, (res) => {
+    enabled = res.enabled;
+    if (enabled) start();
+  });
+
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'local' && changes.enabled) {
+      enabled = changes.enabled.newValue;
+      if (enabled) {
+        start();
+      } else {
+        stop();
+      }
     }
   });
-  mo.observe(document.body, { childList: true, subtree: true });
 })();
