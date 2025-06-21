@@ -3,7 +3,11 @@
   "version": "1.1",
   "description": "Detect large images (>=1080x1080) and list them in an on-page panel.",
   "manifest_version": 3,
-  "permissions": [],
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Image Size Checker"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
