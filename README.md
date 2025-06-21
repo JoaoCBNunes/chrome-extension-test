@@ -15,3 +15,7 @@ This repository contains a minimal Chrome extension that reports images with an 
 - `extension/content-script.js` – script injected into each page
 
 No build step or dependencies are required. The extension runs as soon as it is loaded.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
