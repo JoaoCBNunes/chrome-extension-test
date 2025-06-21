@@ -1,4 +1,7 @@
 (() => {
+  // Counter for detected images
+  let imgCount = 0;
+
   // 1. Create the info panel
   const panel = document.createElement('div');
   panel.style.cssText = `
@@ -12,7 +15,7 @@
     font-family: monospace;
     font-size: 12px;
     padding: 4px;
-    max-height: 480px;
+    max-height: 580px;
     overflow: auto;
     box-shadow: 0 2px 4px rgba(0,0,0,.2);
   `;
@@ -21,9 +24,10 @@
 
   // 2. Report function for console and panel
   const report = (img) => {
+    imgCount++;
     const { naturalWidth: w, naturalHeight: h, src: url } = img;
     const line = document.createElement('div');
-    line.textContent = `${w}×${h} → `;
+    line.textContent = `[${imgCount}] ${w}×${h} → `;
     line.style.marginBottom = '12px';
     const anchor = document.createElement('a');
     anchor.href = url;
@@ -31,7 +35,7 @@
     anchor.textContent = url;
     line.appendChild(anchor);
     panel.appendChild(line);
-    console.log('[IMAGEM GRANDE]', w, '×', h, url);
+    console.log(`[${imgCount}]`, '[IMAGEM GRANDE]', w, '×', h, url);
   };
 
   // 3. Check image area
