@@ -1,6 +1,7 @@
 (() => {
-  // Counter for detected images
-  let imgCount = 0;
+  const run = () => {
+    // Counter for detected images
+    let imgCount = 0;
 
   // 1. Create the info panel
   const panel = document.createElement('div');
@@ -67,4 +68,11 @@
     }
   });
   mo.observe(document.body, { childList: true, subtree: true });
+  };
+
+  chrome.storage.local.get({ enabled: true }, (res) => {
+    if (res.enabled) {
+      run();
+    }
+  });
 })();
