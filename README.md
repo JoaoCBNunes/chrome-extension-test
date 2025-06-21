@@ -1,6 +1,6 @@
 # Chrome Image Size Checker Extension
 
-This repository contains a minimal Chrome extension that reports images with an area of at least **1080×1080** pixels on the current page. It adds a pink panel to the top of the page listing the large images found.
+This repository contains a minimal Chrome extension that reports images with an area of at least **1080×1080** pixels on the current page. It adds a pink panel to the top of the page listing the large images found, now labeling each one with an index such as `[1]` or `[2]`. The panel height increased to **580px**, reflected in extension version **1.1**.
 
 ## Installation
 
